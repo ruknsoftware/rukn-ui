@@ -1,0 +1,6 @@
+/* Design tokens — CSS custom properties used outside Tailwind classes */
+:root {
+  /* Canvas dot background (used in FormEditorPage) */
+  --canvas-dot-color: #d3e4fe;
+  --canvas-dot-size: 20px;
+}
