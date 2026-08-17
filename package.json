@@ -1,6 +1,6 @@
 {
   "name": "@ruknsoftware/rukn-ui",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "main": "src/index.js",
   "exports": {
@@ -12,8 +12,8 @@
     "tailwind-preset.js"
   ],
   "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
