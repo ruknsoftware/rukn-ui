@@ -10,6 +10,7 @@ import WidgetDate from './WidgetDate.vue'
 import WidgetDatetime from './WidgetDatetime.vue'
 import WidgetAttach from './WidgetAttach.vue'
 import WidgetAttachImage from './WidgetAttachImage.vue'
+import WidgetLink from './WidgetLink.vue'
 
 export const WIDGET_REGISTRY = {
   Data: WidgetData,
@@ -24,6 +25,7 @@ export const WIDGET_REGISTRY = {
   Datetime: WidgetDatetime,
   Attach: WidgetAttach,
   'Attach Image': WidgetAttachImage,
+  Link: WidgetLink,
 }
 
 export function resolveWidget(fieldtype) {
