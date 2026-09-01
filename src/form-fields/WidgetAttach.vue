@@ -31,6 +31,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import FieldLabel from './FieldLabel.vue'
+import { uploadAttachment } from './attachUploader'
+
 const props = defineProps({
   field: { type: Object, required: true },
   modelValue: { default: null },
@@ -39,6 +41,8 @@ const props = defineProps({
   error: { type: String, default: null },
   required: { type: Boolean, default: false },
   hideLabel: { type: Boolean, default: false },
+  generatedDoctype: { type: String, default: '' },
+  tempName: { type: String, default: '' },
 })
 const emit = defineEmits(['update:modelValue', 'blur'])
 const uploading = ref(false)
@@ -49,16 +53,12 @@ async function onFileChange(event) {
   if (!file) return emit('update:modelValue', null)
   uploading.value = true
   try {
-    const fd = new FormData()
-    fd.append('file', file)
-    fd.append('is_private', '0')
-    const res = await fetch('/api/method/upload_file', {
-      method: 'POST',
-      headers: { 'X-Frappe-CSRF-Token': window.csrf_token || '' },
-      body: fd,
+    const uploaded = await uploadAttachment(file, {
+      doctype: props.generatedDoctype,
+      docname: props.tempName,
+      fieldname: props.field.fieldname,
     })
-    const data = await res.json()
-    emit('update:modelValue', data?.message?.file_url ?? null)
+    emit('update:modelValue', uploaded?.file_url ?? null)
   } finally {
     uploading.value = false
   }
