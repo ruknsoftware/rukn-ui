@@ -14,3 +14,4 @@ export { default as WidgetDate } from "./form-fields/WidgetDate.vue";
 export { default as WidgetDatetime } from "./form-fields/WidgetDatetime.vue";
 export { default as WidgetAttach } from "./form-fields/WidgetAttach.vue";
 export { default as WidgetAttachImage } from "./form-fields/WidgetAttachImage.vue";
+export { default as WidgetLink } from "./form-fields/WidgetLink.vue";
