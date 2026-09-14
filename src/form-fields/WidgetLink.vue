@@ -10,7 +10,7 @@
         :disabled="disabled"
         autocomplete="off"
         :class="[
-          'w-full py-3 pl-4 pr-10 rounded-lg border transition-all outline-none text-body-md bg-white placeholder:text-secondary/50 disabled:opacity-50 disabled:cursor-not-allowed read-only:bg-surface-container-low',
+          'w-full py-3 ps-4 pe-10 rounded-lg border transition-all outline-none text-body-md bg-white placeholder:text-secondary/50 disabled:opacity-50 disabled:cursor-not-allowed read-only:bg-surface-container-low',
           error ? 'border-error' : 'border-outline-variant focus:ring-2 focus:ring-primary-container/20 focus:border-primary-container',
           field.bold ? 'font-bold' : '',
         ]"
@@ -21,18 +21,13 @@
       <button
         v-if="modelValue && !disabled && !readonly"
         type="button"
-        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-secondary"
-        style="font-size: 18px"
+        class="absolute end-3 top-1/2 -translate-y-1/2"
         @mousedown.prevent="clear"
       >
-        close
+        <span class="material-symbols-outlined text-secondary" style="font-size: 18px">close</span>
       </button>
-      <span
-        v-else
-        class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-secondary"
-        style="font-size: 18px"
-      >
-        search
+      <span v-else class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2">
+        <span class="material-symbols-outlined text-secondary" style="font-size: 18px">search</span>
       </span>
     </div>
     <p v-if="error" class="text-label-sm text-error">{{ error }}</p>
