@@ -6,7 +6,7 @@
         v-model="localValue"
         :disabled="disabled"
         :class="[
-          'w-full px-4 py-3 rounded-lg border transition-all outline-none text-body-md bg-white appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
+          'w-full ps-4 pe-10 py-3 rounded-lg border transition-all outline-none text-body-md bg-white appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
           error ? 'border-error' : 'border-outline-variant focus:ring-2 focus:ring-primary-container/20 focus:border-primary-container',
           localValue ? 'text-on-surface' : 'text-secondary/50',
           field.bold ? 'font-bold' : '',
@@ -16,7 +16,9 @@
         <option value="" disabled>Select an option</option>
         <option v-for="opt in options" :key="opt" :value="opt">{{ opt }}</option>
       </select>
-      <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" style="font-size:18px">expand_more</span>
+      <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2">
+        <span class="material-symbols-outlined text-secondary" style="font-size:18px">expand_more</span>
+      </span>
     </div>
     <p v-if="error" class="text-label-sm text-error">{{ error }}</p>
     <p v-else-if="field.description" class="text-label-sm text-secondary">{{ field.description }}</p>
