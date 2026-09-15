@@ -13,7 +13,7 @@
         ]"
         @blur="emit('blur')"
       >
-        <option value="" disabled>Select an option</option>
+        <option value="" disabled>{{ placeholderText }}</option>
         <option v-for="opt in options" :key="opt" :value="opt">{{ opt }}</option>
       </select>
       <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2">
@@ -36,6 +36,7 @@ const props = defineProps({
   error: { type: String, default: null },
   required: { type: Boolean, default: false },
   hideLabel: { type: Boolean, default: false },
+  placeholderText: { type: String, default: 'Select an option' },
 })
 const emit = defineEmits(['update:modelValue', 'blur'])
 const options = computed(() =>

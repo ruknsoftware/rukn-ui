@@ -12,7 +12,7 @@
         <span class="material-symbols-outlined text-secondary" style="font-size:20px">attach_file</span>
       </span>
       <span class="text-body-md text-secondary">
-        {{ uploading ? 'Uploading…' : localValue ? 'Change file' : 'Choose file' }}
+        {{ uploading ? uploadingText : localValue ? changeFileText : chooseFileText }}
       </span>
       <input
         type="file"
@@ -45,6 +45,9 @@ const props = defineProps({
   hideLabel: { type: Boolean, default: false },
   generatedDoctype: { type: String, default: '' },
   tempName: { type: String, default: '' },
+  chooseFileText: { type: String, default: 'Choose file' },
+  changeFileText: { type: String, default: 'Change file' },
+  uploadingText: { type: String, default: 'Uploading…' },
 })
 const emit = defineEmits(['update:modelValue', 'blur'])
 const uploading = ref(false)
