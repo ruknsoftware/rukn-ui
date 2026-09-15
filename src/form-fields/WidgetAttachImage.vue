@@ -3,12 +3,14 @@
     <FieldLabel :field="field" :required="required" />
     <label
       :class="[
-        'flex items-center gap-3 px-4 py-3 rounded-lg border transition-all cursor-pointer',
+        'relative flex items-center ps-4 pe-11 py-3 rounded-lg border transition-all cursor-pointer',
         disabled ? 'opacity-50 cursor-not-allowed' : '',
         error ? 'border-error' : 'border-outline-variant hover:border-primary-container',
       ]"
     >
-      <span class="material-symbols-outlined text-secondary" style="font-size:20px">image</span>
+      <span class="pointer-events-none absolute end-4 top-1/2 -translate-y-1/2">
+        <span class="material-symbols-outlined text-secondary" style="font-size:20px">image</span>
+      </span>
       <span class="text-body-md text-secondary">
         {{ uploading ? 'Uploading…' : localValue ? 'Change image' : 'Choose image' }}
       </span>
