@@ -3,14 +3,16 @@
     <FieldLabel v-if="!hideLabel" :field="field" :required="required" />
     <label
       :class="[
-        'flex items-center gap-3 px-4 py-3 rounded-lg border transition-all cursor-pointer',
+        'relative flex items-center ps-4 pe-11 py-3 rounded-lg border transition-all cursor-pointer',
         disabled ? 'opacity-50 cursor-not-allowed' : '',
         error ? 'border-error' : 'border-outline-variant hover:border-primary-container',
       ]"
     >
-      <span class="material-symbols-outlined text-secondary" style="font-size:20px">attach_file</span>
+      <span class="pointer-events-none absolute end-4 top-1/2 -translate-y-1/2">
+        <span class="material-symbols-outlined text-secondary" style="font-size:20px">attach_file</span>
+      </span>
       <span class="text-body-md text-secondary">
-        {{ uploading ? 'Uploading…' : localValue ? 'Change file' : 'Choose file' }}
+        {{ uploading ? uploadingText : localValue ? changeFileText : chooseFileText }}
       </span>
       <input
         type="file"
@@ -43,6 +45,9 @@ const props = defineProps({
   hideLabel: { type: Boolean, default: false },
   generatedDoctype: { type: String, default: '' },
   tempName: { type: String, default: '' },
+  chooseFileText: { type: String, default: 'Choose file' },
+  changeFileText: { type: String, default: 'Change file' },
+  uploadingText: { type: String, default: 'Uploading…' },
 })
 const emit = defineEmits(['update:modelValue', 'blur'])
 const uploading = ref(false)
