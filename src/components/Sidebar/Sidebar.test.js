@@ -112,15 +112,18 @@ describe("Sidebar", () => {
 
   it("defaults containerClass to the MD3 tokens", () => {
     const wrapper = mount(Sidebar, { props: { sections } });
-    expect(wrapper.find(".bg-surface-container-low").exists()).toBe(true);
+    // .overflow-y-auto is unique to the root panel, unlike bg-surface-container-low
+    // which an active SidebarItem also carries.
+    expect(wrapper.find(".overflow-y-auto").classes()).toContain("bg-surface-container-low");
   });
 
   it("lets containerClass override the panel's background/border", () => {
     const wrapper = mount(Sidebar, {
       props: { sections, containerClass: "bg-white border-e border-[#c7c4d8]" },
     });
-    expect(wrapper.find(".bg-surface-container-low").exists()).toBe(false);
-    expect(wrapper.find(".bg-white").exists()).toBe(true);
+    const panel = wrapper.find(".overflow-y-auto");
+    expect(panel.classes()).not.toContain("bg-surface-container-low");
+    expect(panel.classes()).toContain("bg-white");
   });
 
   it("closes the mobile drawer when a slotted <a> nav item is clicked", async () => {

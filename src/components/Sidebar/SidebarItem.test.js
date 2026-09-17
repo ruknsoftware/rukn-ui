@@ -18,8 +18,8 @@ describe("SidebarItem", () => {
 
   it("applies active styling when isActive is true", () => {
     const wrapper = mount(SidebarItem, { props: { label: "Dashboard", isActive: true } });
-    expect(wrapper.find("button").classes()).toContain("bg-primary-fixed");
-    expect(wrapper.find("button").classes()).toContain("text-on-primary-fixed");
+    expect(wrapper.find("button").classes()).toContain("bg-surface-container-low");
+    expect(wrapper.find("button").classes()).toContain("text-primary");
   });
 
   it("renders a material-symbols icon name as the icon span's text", () => {
