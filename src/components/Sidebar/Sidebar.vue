@@ -6,7 +6,7 @@
   />
 
   <div
-    class="flex h-full flex-shrink-0 flex-col overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:z-50 max-md:w-sidebar-width max-md:duration-200"
+    class="flex flex-shrink-0 flex-col self-stretch overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:z-50 max-md:h-auto max-md:w-sidebar-width max-md:duration-200"
     :class="[
       containerClass,
       shouldCollapse ? 'w-sidebar-collapsed-width' : 'w-sidebar-width',
