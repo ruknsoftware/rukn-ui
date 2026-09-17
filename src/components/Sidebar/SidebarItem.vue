@@ -5,23 +5,23 @@
     :accesskey="accessKey"
     :title="isCollapsed ? label : undefined"
     @click="!disabled && onClick && onClick()"
-    class="flex w-full items-center rounded-lg px-2 py-1.5 text-label-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+    class="flex w-full items-center rounded-xl px-2 py-1.5 text-label-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     :class="
       disabled
         ? 'cursor-not-allowed text-on-surface-variant opacity-50'
         : isActive
-          ? 'bg-primary-container text-on-primary-container font-semibold'
+          ? 'bg-primary-fixed text-on-primary-fixed font-bold'
           : 'text-on-surface-variant hover:bg-surface-container-high'
     "
   >
-    <span class="flex flex-1 items-center gap-2 truncate">
+    <span class="flex flex-1 items-center gap-3 truncate">
       <span class="grid flex-shrink-0 place-items-center">
         <slot name="icon">
           <span
             v-if="icon && typeof icon === 'string'"
-            class="material-symbols-outlined text-[20px] leading-none"
+            class="material-symbols-outlined text-[22px] leading-none"
           >{{ icon }}</span>
-          <component v-else-if="icon" :is="icon" class="size-5" />
+          <component v-else-if="icon" :is="icon" class="size-6" />
         </slot>
       </span>
       <span
