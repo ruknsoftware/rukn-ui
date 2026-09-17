@@ -85,11 +85,50 @@ describe("Sidebar", () => {
     expect(chevronTexts).toContain("expand_more");
   });
 
+  it("lets a content slot fully replace the sections-driven middle area", () => {
+    const wrapper = mount(Sidebar, {
+      props: { sections },
+      slots: { content: '<div class="custom-content">custom nav</div>' },
+    });
+    expect(wrapper.find(".custom-content").exists()).toBe(true);
+    expect(wrapper.text()).not.toContain("Dashboard");
+  });
+
   it("renders footer-items slot content", () => {
     const wrapper = mount(Sidebar, {
       props: { sections },
       slots: { "footer-items": '<div class="custom-footer">Sign Out</div>' },
     });
     expect(wrapper.find(".custom-footer").exists()).toBe(true);
+  });
+
+  it("omits the footer wrapper's top padding when disableCollapse hides the toggle button", () => {
+    const wrapper = mount(Sidebar, {
+      props: { sections, disableCollapse: true },
+      slots: { "footer-items": '<div class="custom-footer">Sign Out</div>' },
+    });
+    expect(wrapper.find(".custom-footer").element.parentElement.className).not.toContain("pt-2");
+  });
+
+  it("defaults containerClass to the MD3 tokens", () => {
+    const wrapper = mount(Sidebar, { props: { sections } });
+    expect(wrapper.find(".bg-surface-container-low").exists()).toBe(true);
+  });
+
+  it("lets containerClass override the panel's background/border", () => {
+    const wrapper = mount(Sidebar, {
+      props: { sections, containerClass: "bg-white border-e border-[#c7c4d8]" },
+    });
+    expect(wrapper.find(".bg-surface-container-low").exists()).toBe(false);
+    expect(wrapper.find(".bg-white").exists()).toBe(true);
+  });
+
+  it("closes the mobile drawer when a slotted <a> nav item is clicked", async () => {
+    const wrapper = mount(Sidebar, {
+      props: { sections, mobileOpen: true },
+      slots: { "sidebar-item": '<a href="/documents" @click.prevent>Documents</a>' },
+    });
+    await wrapper.find("a").trigger("click");
+    expect(wrapper.find(".bg-black\\/40").exists()).toBe(false);
   });
 });

@@ -6,8 +6,9 @@
   />
 
   <div
-    class="flex h-full flex-shrink-0 flex-col overflow-y-auto overflow-x-hidden border-e border-outline-variant bg-surface-container-low p-2 transition-all duration-300 ease-in-out max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:z-50 max-md:w-sidebar-width max-md:duration-200"
+    class="flex h-full flex-shrink-0 flex-col overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:z-50 max-md:w-sidebar-width max-md:duration-200"
     :class="[
+      containerClass,
       shouldCollapse ? 'w-sidebar-collapsed-width' : 'w-sidebar-width',
       mobileOpen
         ? 'max-md:translate-x-0'
@@ -26,22 +27,24 @@
       </SidebarHeader>
     </slot>
 
-    <div @click="closeOnItemClick">
-      <SidebarSection
-        v-for="section in sections"
-        :key="section.label ?? section.items.map((item) => item.label).join('-')"
-        :label="section.label"
-        :items="section.items"
-        :collapsible="section.collapsible"
-        :chevron-icon="section.chevronIcon ?? chevronIcon"
-      >
-        <template #sidebar-item="{ item, isCollapsed }">
-          <slot name="sidebar-item" :item="item" :isCollapsed="isCollapsed" />
-        </template>
-      </SidebarSection>
-    </div>
+    <slot name="content">
+      <div @click="closeOnItemClick">
+        <SidebarSection
+          v-for="section in sections"
+          :key="section.label ?? section.items.map((item) => item.label).join('-')"
+          :label="section.label"
+          :items="section.items"
+          :collapsible="section.collapsible"
+          :chevron-icon="section.chevronIcon ?? chevronIcon"
+        >
+          <template #sidebar-item="{ item, isCollapsed }">
+            <slot name="sidebar-item" :item="item" :isCollapsed="isCollapsed" />
+          </template>
+        </SidebarSection>
+      </div>
+    </slot>
 
-    <div class="mt-auto flex flex-col gap-1 pt-2">
+    <div class="mt-auto flex flex-col gap-1" :class="{ 'pt-2': !disableCollapse }">
       <slot name="footer-items" :isCollapsed="shouldCollapse" />
       <button
         v-if="!disableCollapse"
@@ -82,6 +85,12 @@ const props = defineProps({
   // Default chevron for collapsible sections; override per-section via section.chevronIcon
   chevronIcon: { default: 'chevron_right' },
   toggleIcon: { default: 'left_panel_open' },
+  // Override the root panel's background/border/padding, e.g. to match an
+  // app's existing design instead of the default MD3 tokens.
+  containerClass: {
+    type: [String, Array, Object],
+    default: 'border-e border-outline-variant bg-surface-container-low p-2',
+  },
 })
 
 // Desktop (md+): icon-only vs full-width. Consuming app owns persistence.
@@ -94,11 +103,12 @@ const mobileOpen = defineModel('mobileOpen', { type: Boolean, default: false })
 const shouldCollapse = computed(() => collapsed.value && !props.disableCollapse)
 provide('isSidebarCollapsed', shouldCollapse)
 
-// Mirrors docflow's AppShell: clicking any nav item (a <button>, unlike the
-// section-label toggles, which are plain divs) closes the mobile drawer;
-// collapsing/expanding a section keeps it open.
+// Mirrors docflow's AppShell: clicking any nav item (a <button> or a <a>/
+// router-link rendered via the sidebar-item slot — unlike the section-label
+// toggles, which are plain divs) closes the mobile drawer; collapsing/
+// expanding a section keeps it open.
 function closeOnItemClick(event) {
-  if (event.target.closest('button')) {
+  if (event.target.closest('button, a')) {
     mobileOpen.value = false
   }
 }
