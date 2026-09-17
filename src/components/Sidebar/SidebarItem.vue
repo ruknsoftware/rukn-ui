@@ -1,14 +1,17 @@
 <template>
   <button
     type="button"
+    :disabled="disabled"
     :accesskey="accessKey"
     :title="isCollapsed ? label : undefined"
-    @click="onClick && onClick()"
+    @click="!disabled && onClick && onClick()"
     class="flex w-full items-center rounded-lg px-2 py-1.5 text-label-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     :class="
-      isActive
-        ? 'bg-primary-container text-on-primary-container font-semibold'
-        : 'text-on-surface-variant hover:bg-surface-container-high'
+      disabled
+        ? 'cursor-not-allowed text-on-surface-variant opacity-50'
+        : isActive
+          ? 'bg-primary-container text-on-primary-container font-semibold'
+          : 'text-on-surface-variant hover:bg-surface-container-high'
     "
   >
     <span class="flex flex-1 items-center gap-2 truncate">
@@ -44,6 +47,7 @@ defineProps({
   icon: { default: null },
   suffix: { type: String, default: null },
   isActive: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
   onClick: { type: Function, default: null },
   accessKey: { type: String, default: null },
 })

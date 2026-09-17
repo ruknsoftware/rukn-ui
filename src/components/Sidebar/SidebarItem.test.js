@@ -51,4 +51,15 @@ describe("SidebarItem", () => {
     const wrapper = mount(SidebarItem, { props: { label: "Projects", suffix: "12" } });
     expect(wrapper.text()).toContain("12");
   });
+
+  it("disables the button and ignores clicks when disabled is true", async () => {
+    const onClick = vi.fn();
+    const wrapper = mount(SidebarItem, {
+      props: { label: "Management", disabled: true, onClick },
+    });
+    expect(wrapper.find("button").attributes("disabled")).toBeDefined();
+    expect(wrapper.find("button").classes()).toContain("opacity-50");
+    await wrapper.find("button").trigger("click");
+    expect(onClick).not.toHaveBeenCalled();
+  });
 });

@@ -36,6 +36,7 @@
             :icon="item.icon"
             :suffix="item.suffix"
             :isActive="item.isActive"
+            :disabled="item.disabled"
             :onClick="item.onClick"
             :accessKey="item.accessKey"
           />
