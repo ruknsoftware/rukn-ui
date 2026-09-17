@@ -75,8 +75,9 @@ export const md3FontFamily = {
 }
 
 export const md3Spacing = {
-  'gutter':        '1.5rem',
-  'sidebar-width': '280px',
+  'gutter':                  '1.5rem',
+  'sidebar-width':           '280px',
+  'sidebar-collapsed-width': '72px',
 }
 
 export const md3BorderRadius = {

@@ -15,3 +15,8 @@ export { default as WidgetDatetime } from "./form-fields/WidgetDatetime.vue";
 export { default as WidgetAttach } from "./form-fields/WidgetAttach.vue";
 export { default as WidgetAttachImage } from "./form-fields/WidgetAttachImage.vue";
 export { default as WidgetLink } from "./form-fields/WidgetLink.vue";
+
+export { default as Sidebar } from "./components/Sidebar/Sidebar.vue";
+export { default as SidebarHeader } from "./components/Sidebar/SidebarHeader.vue";
+export { default as SidebarSection } from "./components/Sidebar/SidebarSection.vue";
+export { default as SidebarItem } from "./components/Sidebar/SidebarItem.vue";
