@@ -71,4 +71,19 @@ describe("SidebarHeader", () => {
     await wrapper.find("button").trigger("click");
     expect(wrapper.find(".bottom-full").exists()).toBe(true);
   });
+
+  it("closes the dropdown when clicking outside, but not when clicking the trigger itself", async () => {
+    const wrapper = mount(SidebarHeader, {
+      attachTo: document.body,
+      props: { title: "Rukn UI", menuItems: [{ label: "Sign out" }] },
+    });
+    await wrapper.find("button").trigger("click");
+    expect(wrapper.text()).toContain("Sign out");
+
+    document.body.click();
+    await wrapper.vm.$nextTick();
+    expect(wrapper.text()).not.toContain("Sign out");
+
+    wrapper.unmount();
+  });
 });

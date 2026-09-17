@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div ref="root" class="relative">
     <component
       :is="hasMenu ? 'button' : 'div'"
       :type="hasMenu ? 'button' : undefined"
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const props = defineProps({
   // Workspace or app title.
@@ -89,9 +89,18 @@ const props = defineProps({
 
 const hasMenu = computed(() => !!props.menuItems?.length)
 const open = ref(false)
+const root = ref(null)
 
 function handleMenuClick(item) {
   open.value = false
   item.onClick && item.onClick()
 }
+
+function closeOnOutsideClick(event) {
+  if (open.value && !root.value?.contains(event.target)) {
+    open.value = false
+  }
+}
+onMounted(() => document.addEventListener('click', closeOnOutsideClick))
+onBeforeUnmount(() => document.removeEventListener('click', closeOnOutsideClick))
 </script>
