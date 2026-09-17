@@ -32,6 +32,15 @@ describe("Sidebar", () => {
     expect(wrapper.text()).not.toContain("Collapse");
   });
 
+  it("lets collapseLabel/expandLabel override the toggle text, e.g. for localization", async () => {
+    const wrapper = mount(Sidebar, {
+      props: { sections, collapseLabel: "طي", expandLabel: "توسيع" },
+    });
+    expect(wrapper.text()).toContain("طي");
+    await wrapper.findAll("button").at(-1).trigger("click");
+    expect(wrapper.text()).toContain("توسيع");
+  });
+
   it("keeps the mobile drawer off-canvas and hides the backdrop by default", () => {
     const wrapper = mount(Sidebar, { props: { sections } });
     expect(wrapper.find(".bg-black\\/40").exists()).toBe(false);

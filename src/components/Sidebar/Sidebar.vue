@@ -65,7 +65,7 @@
         <span
           class="truncate transition-all duration-300 ease-in-out"
           :class="shouldCollapse ? 'w-0 overflow-hidden opacity-0' : 'w-auto opacity-100'"
-        >{{ shouldCollapse ? 'Expand' : 'Collapse' }}</span>
+        >{{ shouldCollapse ? expandLabel : collapseLabel }}</span>
       </button>
     </div>
   </div>
@@ -85,6 +85,8 @@ const props = defineProps({
   // Default chevron for collapsible sections; override per-section via section.chevronIcon
   chevronIcon: { default: 'chevron_right' },
   toggleIcon: { default: 'left_panel_open' },
+  collapseLabel: { type: String, default: 'Collapse' },
+  expandLabel: { type: String, default: 'Expand' },
   // Override the root panel's background/border/padding, e.g. to match an
   // app's existing design instead of the default MD3 tokens.
   containerClass: {
