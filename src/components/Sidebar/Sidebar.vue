@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { computed, provide } from 'vue'
+import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 import SidebarHeader from './SidebarHeader.vue'
 import SidebarSection from './SidebarSection.vue'
 
@@ -105,7 +105,30 @@ const collapsed = defineModel('collapsed', { type: Boolean, default: false })
 // backdrop, not the button that opens it.
 const mobileOpen = defineModel('mobileOpen', { type: Boolean, default: false })
 
-const shouldCollapse = computed(() => collapsed.value && !props.disableCollapse)
+// Mirrors the max-md: breakpoint used everywhere else in this component for
+// the off-canvas drawer. Needed here (unlike the drawer's own CSS-only
+// width/position) because "collapsed" also drives JS-provided state
+// (isSidebarCollapsed) that SidebarItem/SidebarHeader use to hide their
+// label text — a plain CSS override can't reach that, only a real check of
+// the viewport can stop a desktop-persisted collapsed=true from hiding
+// every label once the drawer forces the panel back to full width on mobile.
+const isMobile = ref(false)
+let mediaQuery
+function updateIsMobile(event) {
+  isMobile.value = event.matches
+}
+onMounted(() => {
+  mediaQuery = window.matchMedia('(max-width: 767px)')
+  updateIsMobile(mediaQuery)
+  mediaQuery.addEventListener('change', updateIsMobile)
+})
+onBeforeUnmount(() => {
+  mediaQuery?.removeEventListener('change', updateIsMobile)
+})
+
+const shouldCollapse = computed(
+  () => collapsed.value && !props.disableCollapse && !isMobile.value,
+)
 provide('isSidebarCollapsed', shouldCollapse)
 
 // Mirrors docflow's AppShell: clicking any nav item (a <button> or a <a>/

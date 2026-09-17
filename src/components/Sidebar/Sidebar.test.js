@@ -1,6 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import Sidebar from "./Sidebar.vue";
+
+function stubMatchMedia(matches = false) {
+  window.matchMedia = vi.fn().mockImplementation((query) => ({
+    matches,
+    media: query,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  }));
+}
 
 const sections = [
   {
@@ -10,6 +19,10 @@ const sections = [
 ];
 
 describe("Sidebar", () => {
+  beforeEach(() => {
+    stubMatchMedia(false);
+  });
+
   it("renders the header and sections", () => {
     const wrapper = mount(Sidebar, {
       props: { header: { title: "Rukn UI", subtitle: "Sidebar Demo" }, sections },
@@ -161,5 +174,18 @@ describe("Sidebar", () => {
     });
     await wrapper.find("a").trigger("click");
     expect(wrapper.find(".bg-black\\/40").exists()).toBe(false);
+  });
+
+  it("still shows item labels on mobile even if collapsed was left true from a desktop session", async () => {
+    stubMatchMedia(true);
+    const wrapper = mount(Sidebar, {
+      props: { sections, collapsed: true, mobileOpen: true },
+    });
+    await wrapper.vm.$nextTick();
+    // The label span's own classes, not just DOM text presence — the label
+    // is always in the DOM and only ever hidden via width/opacity classes.
+    const label = wrapper.find(".truncate.text-start");
+    expect(label.classes()).toContain("w-auto");
+    expect(label.classes()).not.toContain("w-0");
   });
 });
