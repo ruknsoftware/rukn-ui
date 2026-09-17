@@ -5,7 +5,7 @@
     :accesskey="accessKey"
     :title="isCollapsed ? label : undefined"
     @click="!disabled && onClick && onClick()"
-    class="flex w-full items-center rounded-xl px-3 py-2.5 text-label-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+    class="flex w-full items-center rounded-full px-3 py-2.5 text-label-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     :class="
       disabled
         ? 'cursor-not-allowed text-on-surface-variant opacity-50'
