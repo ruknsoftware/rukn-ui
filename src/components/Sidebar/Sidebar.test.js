@@ -19,6 +19,25 @@ describe("Sidebar", () => {
     expect(wrapper.text()).toContain("Dashboard");
   });
 
+  it("passes header.menuItems/showLogo/menuPosition through to SidebarHeader", async () => {
+    const wrapper = mount(Sidebar, {
+      props: {
+        sections,
+        header: {
+          title: "Account",
+          showLogo: false,
+          menuItems: [{ label: "Sign out" }],
+          menuPosition: "top",
+        },
+      },
+    });
+    expect(wrapper.find(".bg-surface-container-high").exists()).toBe(false);
+    const headerButton = wrapper.find("button");
+    await headerButton.trigger("click");
+    expect(wrapper.find(".bottom-full").exists()).toBe(true);
+    expect(wrapper.text()).toContain("Sign out");
+  });
+
   it("toggles collapsed state when the collapse button is clicked", async () => {
     const wrapper = mount(Sidebar, { props: { sections } });
     expect(wrapper.text()).toContain("Collapse");

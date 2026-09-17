@@ -21,9 +21,12 @@
         :title="header.title"
         :subtitle="header.subtitle"
         :logo="header.logo"
+        :show-logo="header.showLogo ?? true"
+        :menu-items="header.menuItems"
+        :menu-position="header.menuPosition ?? 'bottom'"
         :isCollapsed="shouldCollapse"
       >
-        <template #logo><slot name="header-logo" /></template>
+        <template #prefix><slot name="header-logo" /></template>
       </SidebarHeader>
     </slot>
 
