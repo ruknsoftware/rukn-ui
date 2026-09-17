@@ -35,6 +35,11 @@
           class="mt-1 truncate text-label-md leading-none text-on-surface-variant opacity-70"
         >{{ subtitle }}</div>
       </div>
+      <span
+        v-if="hasMenu"
+        class="material-symbols-outlined flex-shrink-0 text-[20px] leading-none text-on-surface-variant transition-all duration-300 ease-in-out"
+        :class="isCollapsed ? 'w-0 overflow-hidden opacity-0' : 'w-auto opacity-100'"
+      >expand_more</span>
     </component>
 
     <div

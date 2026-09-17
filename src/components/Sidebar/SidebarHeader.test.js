@@ -46,6 +46,14 @@ describe("SidebarHeader", () => {
   it("is a plain non-interactive div when no menuItems are given", () => {
     const wrapper = mount(SidebarHeader, { props: { title: "Rukn UI" } });
     expect(wrapper.find("button").exists()).toBe(false);
+    expect(wrapper.text()).not.toContain("expand_more");
+  });
+
+  it("shows a chevron indicator only when menuItems are given", () => {
+    const wrapper = mount(SidebarHeader, {
+      props: { title: "Rukn UI", menuItems: [{ label: "Sign out" }] },
+    });
+    expect(wrapper.find(".material-symbols-outlined").text()).toBe("expand_more");
   });
 
   it("becomes a clickable trigger that opens a dropdown when menuItems are given", async () => {
