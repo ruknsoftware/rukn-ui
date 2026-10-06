@@ -40,6 +40,9 @@
           <span class="material-symbols-outlined text-secondary" style="font-size:20px">photo_camera</span>
           {{ takePhotoText }}
         </button>
+        <p v-if="cameraFailed" class="border-t border-outline-variant px-4 py-2 text-label-sm text-error">
+          {{ cameraUnavailableText }}
+        </p>
       </div>
       <div
         v-if="cameraOpen"
@@ -130,6 +133,7 @@ const props = defineProps({
   takePhotoText: { type: String, default: 'Take photo' },
   captureText: { type: String, default: 'Capture' },
   cancelText: { type: String, default: 'Cancel' },
+  cameraUnavailableText: { type: String, default: 'Camera unavailable — tap again to use the device camera' },
 })
 const emit = defineEmits(['update:modelValue', 'blur'])
 const uploading = ref(false)
@@ -138,18 +142,26 @@ const fileInput = ref(null)
 const cameraInput = ref(null)
 const videoEl = ref(null)
 const cameraOpen = ref(false)
+const cameraFailed = ref(false)
 let stream = null
 
 // Live camera preview via getUserMedia — needs HTTPS (or localhost) and
 // triggers the browser's camera permission prompt. If it's unavailable or
-// the user denies it, fall back to the OS camera/file picker (capture attr).
+// denied, the OS camera/file picker (capture attr) is the fallback. That
+// `.click()` only works inside a user-gesture turn, so it can't run after the
+// awaited getUserMedia: on failure we reopen the menu and the *next* tap
+// opens the picker synchronously.
 async function openCamera() {
   menuOpen.value = false
-  if (!navigator.mediaDevices?.getUserMedia) return cameraInput.value?.click()
+  if (cameraFailed.value || !navigator.mediaDevices?.getUserMedia) {
+    return cameraInput.value?.click()
+  }
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
   } catch {
-    return cameraInput.value?.click()
+    cameraFailed.value = true
+    menuOpen.value = true
+    return
   }
   cameraOpen.value = true
   await nextTick()
@@ -164,14 +176,17 @@ function closeCamera() {
 
 function capturePhoto() {
   const video = videoEl.value
+  // No frame decoded yet (videoWidth is 0) — ignore the tap, keep the sheet open.
+  if (!video?.videoWidth) return
   const canvas = document.createElement('canvas')
   canvas.width = video.videoWidth
   canvas.height = video.videoHeight
   canvas.getContext('2d').drawImage(video, 0, 0)
   canvas.toBlob(
     (blob) => {
+      if (!blob) return
       closeCamera()
-      if (blob) uploadFile(new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' }))
+      uploadFile(new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' }))
     },
     'image/jpeg',
     0.9,
