@@ -35,11 +35,34 @@
         <button
           type="button"
           class="flex w-full items-center gap-3 border-t border-outline-variant px-4 py-3 text-start text-body-md hover:bg-surface-container"
-          @click="pick(cameraInput)"
+          @click="openCamera"
         >
           <span class="material-symbols-outlined text-secondary" style="font-size:20px">photo_camera</span>
           {{ takePhotoText }}
         </button>
+      </div>
+      <div
+        v-if="cameraOpen"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/90 p-4"
+      >
+        <video ref="videoEl" autoplay playsinline muted class="max-h-[70vh] w-full max-w-lg rounded-lg bg-black"></video>
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="rounded-lg bg-white px-6 py-3 text-body-md text-black"
+            @click="closeCamera"
+          >
+            {{ cancelText }}
+          </button>
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-body-md text-white"
+            @click="capturePhoto"
+          >
+            <span class="material-symbols-outlined" style="font-size:20px">photo_camera</span>
+            {{ captureText }}
+          </button>
+        </div>
       </div>
       <input ref="fileInput" type="file" class="sr-only" tabindex="-1" @change="onFileChange" />
       <input
@@ -83,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick, onBeforeUnmount } from 'vue'
 import FieldLabel from './FieldLabel.vue'
 import { uploadAttachment } from './attachUploader'
 
@@ -105,12 +128,57 @@ const props = defineProps({
   cameraOption: { type: Boolean, default: false },
   chooseFromDeviceText: { type: String, default: 'Choose file' },
   takePhotoText: { type: String, default: 'Take photo' },
+  captureText: { type: String, default: 'Capture' },
+  cancelText: { type: String, default: 'Cancel' },
 })
 const emit = defineEmits(['update:modelValue', 'blur'])
 const uploading = ref(false)
 const menuOpen = ref(false)
 const fileInput = ref(null)
 const cameraInput = ref(null)
+const videoEl = ref(null)
+const cameraOpen = ref(false)
+let stream = null
+
+// Live camera preview via getUserMedia — needs HTTPS (or localhost) and
+// triggers the browser's camera permission prompt. If it's unavailable or
+// the user denies it, fall back to the OS camera/file picker (capture attr).
+async function openCamera() {
+  menuOpen.value = false
+  if (!navigator.mediaDevices?.getUserMedia) return cameraInput.value?.click()
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+  } catch {
+    return cameraInput.value?.click()
+  }
+  cameraOpen.value = true
+  await nextTick()
+  videoEl.value.srcObject = stream
+}
+
+function closeCamera() {
+  stream?.getTracks().forEach((t) => t.stop())
+  stream = null
+  cameraOpen.value = false
+}
+
+function capturePhoto() {
+  const video = videoEl.value
+  const canvas = document.createElement('canvas')
+  canvas.width = video.videoWidth
+  canvas.height = video.videoHeight
+  canvas.getContext('2d').drawImage(video, 0, 0)
+  canvas.toBlob(
+    (blob) => {
+      closeCamera()
+      if (blob) uploadFile(new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' }))
+    },
+    'image/jpeg',
+    0.9,
+  )
+}
+
+onBeforeUnmount(closeCamera)
 
 function pick(input) {
   menuOpen.value = false
@@ -121,6 +189,10 @@ const localValue = computed(() => props.modelValue)
 async function onFileChange(event) {
   const file = event.target?.files?.[0]
   if (!file) return emit('update:modelValue', null)
+  await uploadFile(file)
+}
+
+async function uploadFile(file) {
   uploading.value = true
   try {
     const uploaded = await uploadAttachment(file, {
