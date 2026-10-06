@@ -1,7 +1,59 @@
 <template>
   <div class="space-y-1">
     <FieldLabel v-if="!hideLabel" :field="field" :required="required" />
+    <div v-if="cameraOption" class="relative">
+      <button
+        type="button"
+        :disabled="disabled || uploading"
+        :class="[
+          'relative flex w-full items-center ps-4 pe-11 py-3 rounded-lg border transition-all text-start',
+          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+          error ? 'border-error' : 'border-outline-variant hover:border-primary-container',
+        ]"
+        @click="menuOpen = !menuOpen"
+        @blur="emit('blur')"
+      >
+        <span class="pointer-events-none absolute end-4 top-1/2 -translate-y-1/2">
+          <span class="material-symbols-outlined text-secondary" style="font-size:20px">attach_file</span>
+        </span>
+        <span class="text-body-md text-secondary">
+          {{ uploading ? uploadingText : localValue ? changeFileText : chooseFileText }}
+        </span>
+      </button>
+      <div
+        v-if="menuOpen"
+        class="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-outline-variant bg-white shadow-lg"
+      >
+        <button
+          type="button"
+          class="flex w-full items-center gap-3 px-4 py-3 text-start text-body-md hover:bg-surface-container"
+          @click="pick(fileInput)"
+        >
+          <span class="material-symbols-outlined text-secondary" style="font-size:20px">folder_open</span>
+          {{ chooseFromDeviceText }}
+        </button>
+        <button
+          type="button"
+          class="flex w-full items-center gap-3 border-t border-outline-variant px-4 py-3 text-start text-body-md hover:bg-surface-container"
+          @click="pick(cameraInput)"
+        >
+          <span class="material-symbols-outlined text-secondary" style="font-size:20px">photo_camera</span>
+          {{ takePhotoText }}
+        </button>
+      </div>
+      <input ref="fileInput" type="file" class="sr-only" tabindex="-1" @change="onFileChange" />
+      <input
+        ref="cameraInput"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        class="sr-only"
+        tabindex="-1"
+        @change="onFileChange"
+      />
+    </div>
     <label
+      v-else
       :class="[
         'relative flex items-center ps-4 pe-11 py-3 rounded-lg border transition-all cursor-pointer',
         disabled ? 'opacity-50 cursor-not-allowed' : '',
@@ -48,9 +100,22 @@ const props = defineProps({
   chooseFileText: { type: String, default: 'Choose file' },
   changeFileText: { type: String, default: 'Change file' },
   uploadingText: { type: String, default: 'Uploading…' },
+  // Opt-in: clicking opens a two-option menu (device file / camera photo)
+  // instead of going straight to the OS file picker.
+  cameraOption: { type: Boolean, default: false },
+  chooseFromDeviceText: { type: String, default: 'Choose file' },
+  takePhotoText: { type: String, default: 'Take photo' },
 })
 const emit = defineEmits(['update:modelValue', 'blur'])
 const uploading = ref(false)
+const menuOpen = ref(false)
+const fileInput = ref(null)
+const cameraInput = ref(null)
+
+function pick(input) {
+  menuOpen.value = false
+  input?.click()
+}
 const localValue = computed(() => props.modelValue)
 
 async function onFileChange(event) {
