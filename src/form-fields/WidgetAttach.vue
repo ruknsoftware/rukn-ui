@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 import FieldLabel from './FieldLabel.vue'
 import { uploadAttachment } from './attachUploader'
 
@@ -135,8 +135,10 @@ const props = defineProps({
   cancelText: { type: String, default: 'Cancel' },
   cameraUnavailableText: { type: String, default: 'Camera unavailable — tap again to use the device camera' },
 })
-const emit = defineEmits(['update:modelValue', 'blur'])
+// `uploading` lets a parent form hold its submit until the file URL has been emitted.
+const emit = defineEmits(['update:modelValue', 'blur', 'uploading'])
 const uploading = ref(false)
+watch(uploading, (v) => emit('uploading', v))
 const menuOpen = ref(false)
 const fileInput = ref(null)
 const cameraInput = ref(null)
